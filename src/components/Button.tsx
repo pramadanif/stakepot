@@ -9,6 +9,7 @@ interface ButtonProps {
   className?: string;
   icon?: boolean;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({ 
@@ -16,9 +17,10 @@ export const Button: React.FC<ButtonProps> = ({
   variant = 'primary', 
   className = '', 
   icon = false,
-  onClick 
+  onClick,
+  disabled = false
 }) => {
-  const baseStyles = "inline-flex items-center justify-center px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg";
+  const baseStyles = "inline-flex items-center justify-center px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100";
   
   const variants = {
     primary: "bg-gradient-to-r from-gold to-orange text-white shadow-orange/30 hover:shadow-orange/50",
@@ -29,6 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button 
       onClick={onClick}
+      disabled={disabled}
       className={`${baseStyles} ${variants[variant]} ${className}`}
     >
       {children}

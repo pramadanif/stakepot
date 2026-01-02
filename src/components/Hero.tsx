@@ -2,10 +2,23 @@
 
 import React from 'react';
 import { Button } from './Button';
-import { Coins, Trophy, ShieldCheck, TrendingUp } from 'lucide-react';
+import { Coins, Trophy, ShieldCheck, TrendingUp, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { usePoolStats, useCurrentRound, useCountdown } from '@/hooks/usePool';
+import { formatCSPR } from '@/context/WalletContext';
 
 export const Hero: React.FC = () => {
+  const { stats, loading: statsLoading } = usePoolStats();
+  const { round, loading: roundLoading } = useCurrentRound();
+  const countdown = useCountdown(round?.nextDrawTime || null);
+
+  // Format countdown display
+  const formatCountdown = () => {
+    if (!countdown) return '00:00:00';
+    return `${String(countdown.hours).padStart(2, '0')}:${String(countdown.minutes).padStart(2, '0')}:${String(countdown.seconds).padStart(2, '0')}`;
+  };
+
   return (
     <section className="relative w-full pt-32 pb-20 px-4 overflow-hidden">
       {/* Background Decor */}
@@ -23,7 +36,16 @@ export const Hero: React.FC = () => {
         >
           <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-orange/20 mb-6">
             <span className="w-2 h-2 rounded-full bg-urgency animate-pulse"></span>
-            <span className="text-sm font-semibold text-orange tracking-wide uppercase">Current Jackpot: 125,400 CSPR</span>
+            <span className="text-sm font-semibold text-orange tracking-wide uppercase">
+              {statsLoading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="animate-spin" size={14} />
+                  Loading...
+                </span>
+              ) : (
+                `Total Pool: ${formatCSPR(stats?.totalDeposited || '0')} CSPR`
+              )}
+            </span>
           </div>
           
           <h1 className="text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 text-dark">
@@ -38,8 +60,12 @@ export const Hero: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <Button variant="primary" icon>Join the Jackpot</Button>
-            <Button variant="secondary">How It Works (30s)</Button>
+            <Link href="/dashboard">
+              <Button variant="primary" icon>Join the Jackpot</Button>
+            </Link>
+            <Link href="#how-it-works">
+              <Button variant="secondary">How It Works (30s)</Button>
+            </Link>
           </div>
 
           <div className="mt-12 flex items-center justify-center lg:justify-start gap-8 text-sm font-medium text-gray-500">
@@ -75,8 +101,16 @@ export const Hero: React.FC = () => {
                   
                   <div className="text-center z-10">
                     <span className="block text-gray-400 text-xs font-bold tracking-widest uppercase mb-1">Weekly Prize</span>
-                    <span className="block text-4xl font-black text-dark tracking-tight">5,000</span>
-                    <span className="block text-orange font-bold text-lg">CSPR</span>
+                    {roundLoading ? (
+                      <Loader2 className="animate-spin mx-auto text-orange" size={32} />
+                    ) : (
+                      <>
+                        <span className="block text-4xl font-black text-dark tracking-tight">
+                          {formatCSPR(round?.estimatedPrize || '0')}
+                        </span>
+                        <span className="block text-orange font-bold text-lg">CSPR</span>
+                      </>
+                    )}
                   </div>
 
                   {/* Floating Coins Particles */}
@@ -110,7 +144,9 @@ export const Hero: React.FC = () => {
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-bold uppercase">Draw in</p>
-                <p className="text-sm font-bold text-urgency">04:12:30</p>
+                <p className="text-sm font-bold text-urgency">
+                  {countdown?.days ? `${countdown.days}d ` : ''}{formatCountdown()}
+                </p>
               </div>
             </motion.div>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { WalletProvider } from "@/context/WalletContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "StakePot - The No-Loss Lottery",
-  description: "A no-loss prize pool powered by Casper staking",
+  description: "A no-loss prize pool powered by Casper staking. Deposit CSPR, win jackpots, never lose your principal.",
+  keywords: ["Casper", "CSPR", "Staking", "Lottery", "No-Loss", "Prize Pool", "DeFi"],
+  openGraph: {
+    title: "StakePot - The No-Loss Lottery",
+    description: "Deposit CSPR, win weekly jackpots, never lose your principal.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -31,7 +38,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-cream text-dark`}
       >
-        {children}
+        <WalletProvider>
+          {children}
+        </WalletProvider>
       </body>
     </html>
   );

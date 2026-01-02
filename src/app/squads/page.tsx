@@ -4,17 +4,14 @@ import React from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/Button';
-import { Users, UserPlus, Crown, Shield, Zap } from 'lucide-react';
+import { Users, UserPlus, Crown, Shield, Zap, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
 import Link from 'next/link';
+import { useTopSquads } from '@/hooks/useSquad';
+import { formatCSPR } from '@/context/WalletContext';
 
 export default function Squads() {
-  const topSquads = [
-    { rank: 1, name: "CryptoWhales", members: 5, totalWin: "12,500 CSPR" },
-    { rank: 2, name: "CasperKnights", members: 4, totalWin: "8,200 CSPR" },
-    { rank: 3, name: "LuckyCharm", members: 5, totalWin: "5,100 CSPR" },
-  ];
+  const { squads: topSquads, loading: isLoading } = useTopSquads(10);
 
   return (
     <div className="min-h-screen bg-cream text-dark font-sans selection:bg-gold selection:text-white">
@@ -49,27 +46,44 @@ export default function Squads() {
 
           {/* How it works cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-            <div className="glass-card p-8 text-center hover:-translate-y-2 transition duration-300">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="glass-card p-8 text-center hover:-translate-y-2 transition duration-300"
+            >
               <div className="w-16 h-16 mx-auto bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
                 <UserPlus size={32} />
               </div>
               <h3 className="text-xl font-bold mb-3">1. Form a Team</h3>
               <p className="text-gray-600">Create a squad and invite up to 4 friends to join you.</p>
-            </div>
-            <div className="glass-card p-8 text-center hover:-translate-y-2 transition duration-300">
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="glass-card p-8 text-center hover:-translate-y-2 transition duration-300"
+            >
               <div className="w-16 h-16 mx-auto bg-gold/20 rounded-2xl flex items-center justify-center text-gold mb-6">
                 <Crown size={32} />
               </div>
               <h3 className="text-xl font-bold mb-3">2. Win Jackpot</h3>
               <p className="text-gray-600">If any member wins the weekly draw, the whole squad celebrates.</p>
-            </div>
-            <div className="glass-card p-8 text-center hover:-translate-y-2 transition duration-300">
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="glass-card p-8 text-center hover:-translate-y-2 transition duration-300"
+            >
               <div className="w-16 h-16 mx-auto bg-green-100 rounded-2xl flex items-center justify-center text-green-600 mb-6">
                 <Shield size={32} />
               </div>
               <h3 className="text-xl font-bold mb-3">3. Get Bonus</h3>
               <p className="text-gray-600">The winner gets the jackpot, and squad members share a 5% bonus pool.</p>
-            </div>
+            </motion.div>
           </div>
 
           {/* Leaderboard */}
@@ -79,7 +93,7 @@ export default function Squads() {
                 <Crown className="text-gold" />
                 Top Squads
               </h3>
-              <button className="text-orange font-medium hover:underline">View All</button>
+              <Link href="/squads/join" className="text-orange font-medium hover:underline">View All</Link>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -90,24 +104,42 @@ export default function Squads() {
                 <div className="col-span-2 text-right">Total Won</div>
               </div>
               
-              {topSquads.map((squad) => (
-                <div key={squad.rank} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-orange/5 transition border-b border-gray-100 last:border-0">
-                  <div className="col-span-2 text-center font-bold text-lg text-gray-400">
-                    {squad.rank === 1 ? '🥇' : squad.rank === 2 ? '🥈' : squad.rank === 3 ? '🥉' : `#${squad.rank}`}
-                  </div>
-                  <div className="col-span-6 font-bold text-dark flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300" />
-                    {squad.name}
-                  </div>
-                  <div className="col-span-2 text-center flex items-center justify-center gap-1 text-gray-600">
-                    <Users size={14} />
-                    {squad.members}/5
-                  </div>
-                  <div className="col-span-2 text-right font-bold text-gold">
-                    {squad.totalWin}
-                  </div>
+              {isLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="animate-spin text-orange" size={32} />
                 </div>
-              ))}
+              ) : topSquads && topSquads.length > 0 ? (
+                topSquads.map((squad, index) => (
+                  <Link 
+                    key={squad.id} 
+                    href={`/squads/${squad.id}`}
+                    className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-orange/5 transition border-b border-gray-100 last:border-0"
+                  >
+                    <div className="col-span-2 text-center font-bold text-lg text-gray-400">
+                      {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                    </div>
+                    <div className="col-span-6 font-bold text-dark flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold/30 to-orange/30 flex items-center justify-center text-xs font-bold">
+                        {squad.name.charAt(0).toUpperCase()}
+                      </div>
+                      {squad.name}
+                    </div>
+                    <div className="col-span-2 text-center flex items-center justify-center gap-1 text-gray-600">
+                      <Users size={14} />
+                      {squad.memberCount || 0}/5
+                    </div>
+                    <div className="col-span-2 text-right font-bold text-gold">
+                      {formatCSPR(squad.totalWon || '0')} CSPR
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <Users size={40} className="mx-auto mb-3 opacity-30" />
+                  <p className="font-medium">No squads yet</p>
+                  <p className="text-sm">Be the first to create one!</p>
+                </div>
+              )}
             </div>
           </div>
 

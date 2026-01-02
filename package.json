@@ -1,5 +1,5 @@
 {
-  "name": "casperpot-frontend",
+  "name": "stakepot-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,11 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "casper-js-sdk": "^5.0.7",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

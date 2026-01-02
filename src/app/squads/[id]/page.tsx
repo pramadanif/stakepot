@@ -15,11 +15,10 @@ export default function SquadDetails() {
     id: params.id,
     name: "CryptoWhales",
     rank: 1,
-    members: 4,
-    maxMembers: 5,
-    totalWin: "12,500 CSPR",
+    memberCount: 4,
+    totalWon: "12,500",
     description: "We are a group of long-term CSPR holders. Join us to maximize your winning chances! Active players only.",
-    isFull: false
+    isActive: true
   };
 
   return (
@@ -53,7 +52,7 @@ export default function SquadDetails() {
                     </div>
                     <p className="text-gray-300 flex items-center gap-2">
                       <Trophy size={16} className="text-gold" />
-                      Total Won: <span className="text-white font-bold">{squad.totalWin}</span>
+                      Total Won: <span className="text-white font-bold">{squad.totalWon} CSPR</span>
                     </p>
                   </div>
                 </div>
@@ -79,10 +78,10 @@ export default function SquadDetails() {
                   <div>
                     <h3 className="text-lg font-bold mb-4 text-dark flex items-center gap-2">
                       <Users size={20} />
-                      Members ({squad.members}/{squad.maxMembers})
+                      Members ({squad.memberCount}/5)
                     </h3>
                     <div className="space-y-3">
-                      {[...Array(squad.members)].map((_, i) => (
+                      {[...Array(squad.memberCount || 0)].map((_, i) => (
                         <div key={i} className="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100">
                           <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">
                             U{i+1}
@@ -91,7 +90,7 @@ export default function SquadDetails() {
                           {i === 0 && <span className="text-[10px] bg-orange/10 text-orange px-2 py-0.5 rounded-full uppercase font-bold">Admin</span>}
                         </div>
                       ))}
-                      {!squad.isFull && (
+                      {squad.memberCount < 5 && (
                         <div className="flex items-center gap-3 p-3 border-2 border-dashed border-gray-200 rounded-xl opacity-60">
                           <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
                             <Users size={14} className="text-gray-400" />
